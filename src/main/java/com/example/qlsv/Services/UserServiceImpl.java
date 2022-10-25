@@ -7,6 +7,7 @@ import com.example.qlsv.Services.Interface.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
             UserModel userModel = new UserModel();
             User user = userRepository.Login(userLogin.getUserName(), userLogin.getPassword());
 
-            userModel.setUserName(user.getUser_name());
+            userModel.setUserName(user.getUserName());
             userModel.setPassword(user.getPassword());
 
             resultLogin.setUser(userModel);
@@ -57,9 +58,10 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+
     @Override
     public ResultModel Register(UserRegisterModel userRegister) {
-        ResultModel result = checkLengthUser(userRegister.getUser_name(), userRegister.getPassword());
+        ResultModel result = checkLengthUser(userRegister.getUserName(), userRegister.getPassword());
         if (!result.isStatus())
             return result;
         else if (!userRegister.getPassword().equals(userRegister.getConfirmPassword())) {
@@ -67,7 +69,7 @@ public class UserServiceImpl implements UserService {
                 result.setStatus(false);
                 result.setMessage("Mat khau xac nhan khong giong");
             }
-        } else if (!(userRepository.GetUserByName(userRegister.getUser_name()) == null)) {
+        } else if (!(userRepository.GetUserByName(userRegister.getUserName()) == null)) {
             {
                 result.setStatus(false);
                 result.setMessage("User name da ton tai");
@@ -81,6 +83,7 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    @Valid
     private ResultModel checkLengthUser(String userName, String password) {
         ResultModel result = new ResultModel();
         if (!checkLength(userName, lengthUserName)) {

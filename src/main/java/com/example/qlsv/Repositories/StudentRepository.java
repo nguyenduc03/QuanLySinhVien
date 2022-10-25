@@ -13,10 +13,10 @@ import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("select " +
-            "new com.example.qlsv.Models.StudentInsertModel(v.student_id,v.student_name,v.student_code ,u.address,u.date_of_birth ,u.average_score)  " +
+            "new com.example.qlsv.Models.StudentInsertModel(v.studentId,v.studentName,v.studentCode ,u.address,u.dateOfBirth ,u.averageScore)  " +
             "from StudentInfo u, Student  v " +
-            "where u.studentInfoID.student_id =  v.student_id " +
-            "and(u.date_of_birth = ?2 or v.student_code = ?1 or v.student_name =?3 )")
+            "where u.studentInfoID.studentId =  v.studentId " +
+            "and(u.dateOfBirth = ?2 or v.studentCode = ?1 or v.studentName =?3 )")
     List<StudentInsertModel> findStudent(String code, Date date, String name);
 
 }

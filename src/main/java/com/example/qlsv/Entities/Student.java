@@ -15,9 +15,9 @@ import java.io.Serializable;
 public class Student implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer student_id;
+    Integer studentId;
     @Column(columnDefinition = "varchar(20) not null")
-    String student_name;
+    String studentName;
     @Column(columnDefinition = "varchar(10) not null")
-    String student_code;
+    String studentCode;
 }

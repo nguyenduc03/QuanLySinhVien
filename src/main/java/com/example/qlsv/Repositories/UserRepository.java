@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-    @Query("select u from User u where u.user_name = ?1 and u.password=?2")
+    @Query("select u from User u where u.userName = ?1 and u.password=?2")
     User Login(String user_name, String password);
 
-    @Query("select u from User u where u.user_name = ?1 ")
+    @Query("select u from User u where u.userName = ?1 ")
     User GetUserByName(String user_name);
 
 

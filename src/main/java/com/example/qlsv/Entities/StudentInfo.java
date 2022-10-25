@@ -19,6 +19,6 @@ public class StudentInfo implements Serializable {
 
     @Column(columnDefinition = "varchar(255) ")
     String address;
-    Date date_of_birth;
-    Double average_score;
+    Date dateOfBirth;
+    Double averageScore;
 }

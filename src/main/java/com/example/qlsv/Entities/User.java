@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Data
@@ -15,9 +17,12 @@ import java.io.Serializable;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int user_id;
+    int userId;
+    @Size(min = 2, message = "user name should have at least 2 characters")
     @Column(columnDefinition = "varchar(20) not null")
-    String user_name;
+    String userName;
+    @NotEmpty
+    @Size(min = 8, message = "password should have at least 8 characters")
     @Column(columnDefinition = "varchar(20) not null")
     String password;
 }

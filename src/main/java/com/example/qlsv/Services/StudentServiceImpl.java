@@ -60,17 +60,17 @@ public class StudentServiceImpl implements StudentService {
     private StudentInsertModel insert(Student student, StudentInsertModel studentInsertModel) {
 
 
-        student.setStudent_name(student.getStudent_name().trim().toUpperCase());
-        student.setStudent_code(student.getStudent_code().trim().toUpperCase());
+        student.setStudentName(student.getStudentName().trim().toUpperCase());
+        student.setStudentCode(student.getStudentCode().trim().toUpperCase());
 
-        studentInsertModel.setStudentID(studentRepository.save(student).getStudent_id());
+        studentInsertModel.setStudentID(studentRepository.save(student).getStudentId());
         StudentInfo studentInfo = studentInsertModel.toStudentInfo();
-        studentInfoRepository.add(studentInfo.getStudentInfoID().getStudent_id(),
-                studentInfo.getAddress(), studentInfo.getAverage_score(), studentInfo.getDate_of_birth());
-        return new StudentInsertModel(student.getStudent_id(),
-                student.getStudent_name(), student.getStudent_code(),
-                studentInfo.getAddress(), studentInfo.getDate_of_birth(),
-                studentInfo.getAverage_score());
+        studentInfoRepository.add(studentInfo.getStudentInfoID().getStudentId(),
+                studentInfo.getAddress(), studentInfo.getAverageScore(), studentInfo.getDateOfBirth());
+        return new StudentInsertModel(student.getStudentId(),
+                student.getStudentName(), student.getStudentCode(),
+                studentInfo.getAddress(), studentInfo.getDateOfBirth(),
+                studentInfo.getAverageScore());
     }
 
     private boolean checkRequiredStudent(StudentInsertModel studentInsertModel) {
@@ -91,31 +91,31 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentInsertModel updateStudent(Student student, StudentInfo studentInfo) {
-        Student oldStudent = studentRepository.getReferenceById(student.getStudent_id());
-        StudentInfo oldStudentInfo = studentInfoRepository.getStudentInfoByID(student.getStudent_id());
+        Student oldStudent = studentRepository.getReferenceById(student.getStudentId());
+        StudentInfo oldStudentInfo = studentInfoRepository.getStudentInfoByID(student.getStudentId());
 
         studentRepository.save(changeDataStudent(oldStudent, student));
         studentInfoRepository.save(changeDataStudentInfo(oldStudentInfo, studentInfo));
-        return new StudentInsertModel(oldStudent.getStudent_id(),
-                oldStudent.getStudent_name(), oldStudent.getStudent_code(),
-                oldStudentInfo.getAddress(), oldStudentInfo.getDate_of_birth(),
-                oldStudentInfo.getAverage_score());
+        return new StudentInsertModel(oldStudent.getStudentId(),
+                oldStudent.getStudentName(), oldStudent.getStudentCode(),
+                oldStudentInfo.getAddress(), oldStudentInfo.getDateOfBirth(),
+                oldStudentInfo.getAverageScore());
     }
 
     private StudentInfo changeDataStudentInfo(StudentInfo oldStudentInfo, StudentInfo studentInfo) {
         if (studentInfo.getAddress() != null)
             oldStudentInfo.setAddress(studentInfo.getAddress());
-        if (studentInfo.getDate_of_birth() != null)
-            oldStudentInfo.setDate_of_birth(studentInfo.getDate_of_birth());
-        if (studentInfo.getAverage_score() != null)
-            oldStudentInfo.setAverage_score(studentInfo.getAverage_score());
+        if (studentInfo.getDateOfBirth() != null)
+            oldStudentInfo.setDateOfBirth(studentInfo.getDateOfBirth());
+        if (studentInfo.getAverageScore() != null)
+            oldStudentInfo.setAverageScore(studentInfo.getAverageScore());
         return oldStudentInfo;
     }
     private Student changeDataStudent(Student oldStudent, Student student) {
-        if (student.getStudent_name() != null)
-            oldStudent.setStudent_name(student.getStudent_name().trim().toUpperCase());
-        if (student.getStudent_code() != null)
-            oldStudent.setStudent_code(student.getStudent_code());
+        if (student.getStudentName() != null)
+            oldStudent.setStudentName(student.getStudentName().trim().toUpperCase());
+        if (student.getStudentCode() != null)
+            oldStudent.setStudentCode(student.getStudentCode());
         return oldStudent;
     }
 
@@ -175,11 +175,11 @@ public class StudentServiceImpl implements StudentService {
         List<StudentInsertModel> studentInsertModels = new ArrayList<>();
         for (Student student : students
         ) {
-            StudentInfo studentInfo = studentInfoRepository.getStudentInfoByID(student.getStudent_id());
-            StudentInsertModel studentInsertModel = new StudentInsertModel(student.getStudent_id(),
-                    student.getStudent_name(), student.getStudent_code(),
-                    studentInfo.getAddress(), studentInfo.getDate_of_birth(),
-                    studentInfo.getAverage_score());
+            StudentInfo studentInfo = studentInfoRepository.getStudentInfoByID(student.getStudentId());
+            StudentInsertModel studentInsertModel = new StudentInsertModel(student.getStudentId(),
+                    student.getStudentName(), student.getStudentCode(),
+                    studentInfo.getAddress(), studentInfo.getDateOfBirth(),
+                    studentInfo.getAverageScore());
             studentInsertModels.add(studentInsertModel);
         }
         return studentInsertModels;

@@ -10,23 +10,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Date;
 
 @Repository
 public interface StudentInfoRepository extends JpaRepository<StudentInfo, StudentInfoID> {
-//    @PersistenceContext
-//     EntityManager entityManager ;
 
     @Modifying
     @Query(value = "insert into student_info (student_id,address,average_score,date_of_birth) VALUES (:studentID,:address,:averageScore,:dateOfBirth)", nativeQuery = true)
     @Transactional
     void add(@Param("studentID") int studentID, @Param("address") String address, @Param("averageScore") double averageScore, @Param("dateOfBirth") Date dateOfBirth);
 
-
-    @Query("select u from StudentInfo u where u.studentInfoID.student_id = ?1")
+    @Query("select u from StudentInfo u where u.studentInfoID.studentId = ?1")
     StudentInfo getStudentInfoByID(int studentID);
 
 }

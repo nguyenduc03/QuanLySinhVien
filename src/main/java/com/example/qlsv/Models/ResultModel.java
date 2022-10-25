@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 public class ResultModel {
     private boolean status;
     private String message;
+    private Data data;
+
+    public class Data {
+
+    }
 
     public ResultModel() {
         this.status = true;
