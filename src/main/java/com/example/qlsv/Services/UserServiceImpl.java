@@ -4,7 +4,11 @@ import com.example.qlsv.Entities.User;
 import com.example.qlsv.Models.*;
 import com.example.qlsv.Repositories.UserRepository;
 import com.example.qlsv.Services.Interface.UserService;
+import com.example.qlsv.utils.Jwt;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -16,6 +20,10 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class UserServiceImpl implements UserService {
     UserRepository userRepository;
+    @Autowired
+    private Jwt jwt;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -27,26 +35,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultLogin login(UserLogin userLogin) {
         ResultLogin resultLogin = new ResultLogin();
-        ResultModel temp = checkLengthUser(userLogin.getUserName(), userLogin.getPassword());
-        resultLogin.setStatus(temp.isStatus());
-        resultLogin.setMessage(temp.getMessage());
-        if (!resultLogin.isStatus())
-            return resultLogin;
-        else {
-            UserModel userModel = new UserModel();
-            User user = userRepository.Login(userLogin.getUserName(), userLogin.getPassword());
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userLogin.getUserName(), userLogin.getPassword()));
 
-            userModel.setUserName(user.getUserName());
-            userModel.setPassword(user.getPassword());
-
-            resultLogin.setUser(userModel);
-            if (resultLogin.getUser() == null) {
-                resultLogin.setMessage("Tai khoan hoac mat khau sai");
-            } else {
-                resultLogin.setMessage("Dang nhap thanh cong");
-                resultLogin.setStatus(true);
-            }
-        }
+        resultLogin.setToken(jwt.generateToken(userLogin.getUserName()));
         return resultLogin;
     }
 

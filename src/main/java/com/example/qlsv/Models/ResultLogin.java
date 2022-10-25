@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 public class ResultLogin {
     private boolean status;
     private String message;
-    private UserModel user;
+    private String token;
+
 
     public ResultLogin() {
         this.status = false;

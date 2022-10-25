@@ -23,6 +23,6 @@ public class User implements Serializable {
     String userName;
     @NotEmpty
     @Size(min = 8, message = "password should have at least 8 characters")
-    @Column(columnDefinition = "varchar(20) not null")
+    @Column(columnDefinition = "varchar(250) not null")
     String password;
 }
