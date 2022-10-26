@@ -37,8 +37,14 @@ public class UserServiceImpl implements UserService {
         ResultLogin resultLogin = new ResultLogin();
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLogin.getUserName(), userLogin.getPassword()));
-
         resultLogin.setToken(jwt.generateToken(userLogin.getUserName()));
+        if (resultLogin.getToken() == null)
+            resultLogin.setMessage("Loi dang nhap");
+        else {
+
+            resultLogin.setMessage("Dang nhap thanh cong");
+            resultLogin.setStatus(true);
+        }
         return resultLogin;
     }
 
@@ -75,7 +81,7 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
-    @Valid
+
     private ResultModel checkLengthUser(String userName, String password) {
         ResultModel result = new ResultModel();
         if (!checkLength(userName, lengthUserName)) {
@@ -95,24 +101,4 @@ public class UserServiceImpl implements UserService {
     private boolean checkLength(String input, int length) {
         return input.length() <= length && input.length() != 0;
     }
-
-    private String hashMD5(String password) {
-        byte[] bytesOfMessage = new byte[0];
-        try {
-            bytesOfMessage = password.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        byte[] bytesOfDigest = md.digest(bytesOfMessage);
-        String hash = DatatypeConverter.printHexBinary(bytesOfDigest).toLowerCase();
-        System.out.println(hash);
-        return hash;
-    }
-
 }

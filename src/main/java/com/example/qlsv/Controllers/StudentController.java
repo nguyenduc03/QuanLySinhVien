@@ -5,6 +5,7 @@ import com.example.qlsv.Models.*;
 import com.example.qlsv.Services.StudentServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +25,13 @@ public class StudentController {
         return studentService.findAll();
     }
 
+
     @RequestMapping("/getStudents")
     public ResultGetStudents getStudents() {
         return studentService.getStudents();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/insertOrUpdateStudent")
     public ResponseEntity<Object> addStudent(@RequestBody StudentInsertModel studentInput) {
         ResultInsertStudent result = studentService.insertOrUpdate(studentInput);
@@ -38,6 +41,7 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/deleteStudent")
     public ResponseEntity<ResultModel> deleteStudent(@RequestBody StudentInsertModel studentInput) {
         ResultModel result = studentService.deleteStudent(studentInput);
@@ -46,6 +50,7 @@ public class StudentController {
         else
             return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
 
     @PostMapping("/findStudent")
     public ResponseEntity<Object> findStudent(@RequestBody InfoFindStudent infoFindStudent) {
