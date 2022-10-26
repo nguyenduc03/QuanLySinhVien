@@ -4,6 +4,7 @@ import com.example.qlsv.Entities.User;
 import com.example.qlsv.Models.*;
 import com.example.qlsv.Repositories.UserRepository;
 import com.example.qlsv.Services.Interface.UserService;
+import com.example.qlsv.utils.Contants;
 import com.example.qlsv.utils.Jwt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
-import javax.xml.bind.DatatypeConverter;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -39,10 +35,11 @@ public class UserServiceImpl implements UserService {
                 new UsernamePasswordAuthenticationToken(userLogin.getUserName(), userLogin.getPassword()));
         resultLogin.setToken(jwt.generateToken(userLogin.getUserName()));
         if (resultLogin.getToken() == null)
-            resultLogin.setMessage("Loi dang nhap");
+            resultLogin.setMessage(Contants.loginFail);
         else {
 
-            resultLogin.setMessage("Dang nhap thanh cong");
+            resultLogin.setMessage(Contants.loginSuccess);
+
             resultLogin.setStatus(true);
         }
         return resultLogin;
@@ -65,18 +62,19 @@ public class UserServiceImpl implements UserService {
         else if (!userRegister.getPassword().equals(userRegister.getConfirmPassword())) {
             {
                 result.setStatus(false);
-                result.setMessage("Mat khau xac nhan khong giong");
+                result.setMessage(Contants.confirmPassNotMatch);
+
             }
         } else if (!(userRepository.GetUserByName(userRegister.getUserName()) == null)) {
             {
                 result.setStatus(false);
-                result.setMessage("User name da ton tai");
+                result.setMessage(Contants.userNameExist);
             }
         } else {
             User user = new User();
             BeanUtils.copyProperties(userRegister, user);
             userRepository.save(user);
-            result.setMessage("Tao thanh cong user ");
+            result.setMessage(Contants.registerSuccess);
         }
         return result;
     }
@@ -86,10 +84,11 @@ public class UserServiceImpl implements UserService {
         ResultModel result = new ResultModel();
         if (!checkLength(userName, lengthUserName)) {
             result.setStatus(false);
-            result.setMessage("Do dai user name khong hop le ");
+            result.setMessage(Contants.overSizeUserName);
         } else if (!checkLength(password, lengthPassword)) {
             result.setStatus(false);
-            result.setMessage("Do dai mat khau khong cho phep");
+            result.setMessage(Contants.overSizePassword);
+
         }
         if (!byteCheck(userName) || !byteCheck(password)) {
             result.setStatus(false);

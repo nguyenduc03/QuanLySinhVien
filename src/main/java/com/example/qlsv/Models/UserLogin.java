@@ -1,5 +1,6 @@
 package com.example.qlsv.Models;
 
+import com.example.qlsv.utils.Contants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,10 +12,10 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLogin {
-    @NotNull
-    @Size(max = 20, message = "user name toi da 20 ki tu")
+    @NotNull(message = Contants.emptyUserName)
+    @Size(max = 20, message = Contants.overSizeUserName)
     private String userName;
-    @NotNull
-    @Size(max = 15, message = "Password toi da 15 ki tu")
+    @NotNull(message = Contants.emptyPassword)
+    @Size(max = 15, message = Contants.overSizePassword)
     private String password;
 }

@@ -2,17 +2,16 @@ package com.example.qlsv.Services;
 
 import com.example.qlsv.Entities.Student;
 import com.example.qlsv.Entities.StudentInfo;
-import com.example.qlsv.Entities.StudentInfoID;
 import com.example.qlsv.Models.*;
 import com.example.qlsv.Repositories.StudentInfoRepository;
 import com.example.qlsv.Repositories.StudentRepository;
 import com.example.qlsv.Services.Interface.StudentService;
-import org.springframework.beans.BeanUtils;
+import com.example.qlsv.utils.Contants;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.time.YearMonth;
 import java.util.*;
 
@@ -31,7 +30,8 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findAll();
     }
 
-
+    @Transactional(rollbackFor = {SQLException.class})
+//(readOnly = false,isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
     @Override
     public ResultInsertStudent insertOrUpdate(StudentInsertModel studentInsertModel) {
 
@@ -41,24 +41,23 @@ public class StudentServiceImpl implements StudentService {
         if (studentInsertModel.getStudentID() != null) {
             StudentInfo studentInfo = studentInsertModel.toStudentInfo();
             if (studentRepository.existsById(studentInsertModel.getStudentID())) {
-                resultInsertStudent.setMessage("Cap nhat thong tin thanh cong");
+                resultInsertStudent.setMessage(Contants.dataUpdateSuccess);
                 resultInsertStudent.setDataStudent(updateStudent(student, studentInfo));
             } else {
-                resultInsertStudent.setMessage("ID khong dung");
+                resultInsertStudent.setMessage(Contants.notFound);
                 resultInsertStudent.setStatus(false);
             }
         } else if (checkRequiredStudent(studentInsertModel)) {
-            resultInsertStudent.setMessage("Them thanh cong");
+            resultInsertStudent.setMessage(Contants.insertSuccess);
             resultInsertStudent.setDataStudent(insert(student, studentInsertModel));
         } else {
-            resultInsertStudent.setMessage("Thong tin khong dung");
+            resultInsertStudent.setMessage(Contants.wrongData);
             resultInsertStudent.setStatus(false);
         }
         return resultInsertStudent;
     }
 
     private StudentInsertModel insert(Student student, StudentInsertModel studentInsertModel) {
-
 
         student.setStudentName(student.getStudentName().trim().toUpperCase());
         student.setStudentCode(student.getStudentCode().trim().toUpperCase());
@@ -76,18 +75,17 @@ public class StudentServiceImpl implements StudentService {
     private boolean checkRequiredStudent(StudentInsertModel studentInsertModel) {
         if (studentInsertModel.getStudentCode() == null || studentInsertModel.getStudentName() == null)
             return false;
-        try {
-            byte[] studentNameBytes = studentInsertModel.getStudentName().getBytes("UTF-8");
-            if (studentNameBytes.length > 20 || studentNameBytes.length == 0)
-                return false;
-            byte[] studentCodeBytes = studentInsertModel.getStudentCode().getBytes("UTF-8");
-            if (studentCodeBytes.length > 10 || studentCodeBytes.length == 0)
-                return false;
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        byte[] studentNameBytes = studentInsertModel.getStudentName().getBytes(StandardCharsets.UTF_8);
+        if (studentNameBytes.length > 20 || studentNameBytes.length == 0)
+            return false;
+        byte[] studentCodeBytes = studentInsertModel.getStudentCode().getBytes(StandardCharsets.UTF_8);
+        if (studentCodeBytes.length > 10 || studentCodeBytes.length == 0)
+            return false;
         return true;
     }
+
+    @Transactional(rollbackFor = {SQLException.class})
+//(readOnly = false,isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
 
     @Override
     public StudentInsertModel updateStudent(Student student, StudentInfo studentInfo) {
@@ -111,6 +109,7 @@ public class StudentServiceImpl implements StudentService {
             oldStudentInfo.setAverageScore(studentInfo.getAverageScore());
         return oldStudentInfo;
     }
+
     private Student changeDataStudent(Student oldStudent, Student student) {
         if (student.getStudentName() != null)
             oldStudent.setStudentName(student.getStudentName().trim().toUpperCase());
@@ -120,21 +119,24 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional(rollbackFor = {SQLException.class})
+//(readOnly = false,isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
+
     public ResultModel deleteStudent(StudentInsertModel studentInput) {
         ResultModel resultModel = new ResultModel();
 
         if (studentInput.getStudentID() == null) {
-            resultModel.setMessage("Loi khong co ID");
+            resultModel.setMessage(Contants.wrongData);
             resultModel.setStatus(false);
             return resultModel;
         } else if (studentRepository.existsById(studentInput.getStudentID())) {
             studentRepository.deleteById(studentInput.getStudentID());
             StudentInfo studentInfo = studentInfoRepository.getStudentInfoByID(studentInput.getStudentID());
             studentInfoRepository.delete(studentInfo);
-            resultModel.setMessage("Xoa thanh cong");
+            resultModel.setMessage(Contants.deleteSuccess);
             resultModel.setStatus(true);
         } else {
-            resultModel.setMessage("Loi khong tim thay ...Kiem tra lai thong tin ");
+            resultModel.setMessage(Contants.wrongData);
             resultModel.setStatus(false);
         }
         return resultModel;
@@ -144,19 +146,19 @@ public class StudentServiceImpl implements StudentService {
     public ResultGetStudents findStudent(InfoFindStudent infoFindStudent) {
         ResultGetStudents result = new ResultGetStudents();
         if (infoFindStudent == null)
-            result.setMessage("Khong nhan duoc du lieu nhap vao");
+            result.setMessage(Contants.wrongData);
         else {
             if (infoFindStudent.getStudentName() != null)
                 infoFindStudent.setStudentName(infoFindStudent.getStudentName().trim().toUpperCase());
             if (infoFindStudent.getDateOfBirth() == null)
-                result.setMessage("Ngay khong hop le");
+                result.setMessage(Contants.invalidDate);
             else if (!checkValidDate(infoFindStudent.getDateOfBirth()))
-                result.setMessage("Ngay khong hop le");
+                result.setMessage(Contants.invalidDate);
             result.setStudets(studentRepository.findStudent(infoFindStudent.getStudentCode(), infoFindStudent.getDateOfBirth(), infoFindStudent.getStudentName()));
             if (result.getStudets().size() == 0)
-                result.setMessage("Khong tim thay");
+                result.setMessage(Contants.notFound);
             else {
-                result.setMessage("Tim thay thong tin thanh cong");
+                result.setMessage(Contants.findDataSuccess);
                 result.setStatus(true);
             }
         }

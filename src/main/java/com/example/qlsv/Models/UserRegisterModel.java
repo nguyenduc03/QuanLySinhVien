@@ -1,5 +1,6 @@
 package com.example.qlsv.Models;
 
+import com.example.qlsv.utils.Contants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,15 +17,15 @@ import javax.validation.constraints.Size;
 @Validated
 public class UserRegisterModel {
 
-    @NotNull(message = "User name khong duoc de trong")
-    @Size(max = 20, message = "user name khong duoc qua 20 ki tu")
+    @NotNull(message = Contants.emptyUserName)
+    @Size(max = 20, message = Contants.overSizeUserName)
     private String userName;
 
-    @NotNull(message = "Password khong duoc de trong")
-    @Size(max = 15, message = "password khong duoc qua 15 ki tu")
+    @NotNull(message = Contants.emptyPassword)
+    @Size(max = 15, message = Contants.overSizePassword)
     private String password;
-    
-    @NotNull(message = "Xac nhan password khong duoc de trong")
-    @Size(max = 15, message = "password khong duoc qua 15 ki tu")
+
+    @NotNull(message = Contants.emptyPassword)
+    @Size(max = 15, message = Contants.overSizePassword)
     private String confirmPassword;
 }

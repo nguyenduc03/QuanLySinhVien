@@ -6,12 +6,14 @@ import com.example.qlsv.Services.StudentServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("API/Student")
+@EnableTransactionManagement
 public class StudentController {
     final
     StudentServiceImpl studentService;
