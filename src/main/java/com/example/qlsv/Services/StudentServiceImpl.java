@@ -79,9 +79,7 @@ public class StudentServiceImpl implements StudentService {
         if (studentNameBytes.length > 20 || studentNameBytes.length == 0)
             return false;
         byte[] studentCodeBytes = studentInsertModel.getStudentCode().getBytes(StandardCharsets.UTF_8);
-        if (studentCodeBytes.length > 10 || studentCodeBytes.length == 0)
-            return false;
-        return true;
+        return studentCodeBytes.length <= 10 && studentCodeBytes.length != 0;
     }
 
     @Transactional(rollbackFor = {SQLException.class})
